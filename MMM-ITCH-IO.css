@@ -6,8 +6,14 @@
 
 .MMM-ITCH-IO .gameTitle{
 	weight: bold;
+	text-align: justify;
 }
 
 .MMM-ITCH-IO img{
 	padding-top: 10px;
+}
+
+.MMM-ITCH-IO .small{
+	max-width: 320px;
+	text-align: justify;
 }
