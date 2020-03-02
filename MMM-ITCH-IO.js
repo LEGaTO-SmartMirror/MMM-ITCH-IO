@@ -52,10 +52,15 @@ Module.register("MMM-ITCH-IO",{
 			descriptionTxt += "...";
 		}
 		
+		gameInfo = this.getCategory()
+		var price = 'Free'
+		if(gameInfo.free){
+			price = 'Payed'
+		}
 		// add description, image, and listTitle below
 		wrapper.innerHTML += "<div>"+descriptionTxt+"</div>";
 		wrapper.innerHTML += "<div>"+descriptionImg+"</div>";
-		wrapper.innerHTML += "<div>"+this.config.gamelists[this.currentGameList].listTitle+"</div>";
+		wrapper.innerHTML += "<div>"+ price + " - " + gameInfo.category+ "</div>";
 
 		// update image style based on configuration
 		var img = wrapper.getElementsByTagName("img")[0];
@@ -73,7 +78,7 @@ Module.register("MMM-ITCH-IO",{
 	
 	// all node helpers are loaded and system is ready to boot up 
 	start: function() {
-	        Log.log(this.name + ' is started!');
+		Log.log(this.name + ' is started!');
 			
 		this.currentGameList = 0; 
 		this.currentGame = 0;
@@ -124,49 +129,54 @@ Module.register("MMM-ITCH-IO",{
 			}
 		}
 	},
+
+	getCategory: function(){
+		var currentGame = this.games[this.currentGame];
+		var title = currentGame.getElementsByTagName("plainTitle")[0].innerHTML
+		var free = currentGame.getElementsByTagName("title")[0].innerHTML.includes('Free')
+		var category = currentGame.getElementsByTagName("title")[0].innerHTML
+		if(category.includes('Simulation')){
+			category = 'Simulation'
+		}else if(category.includes('Strategy')){
+			category = 'Strategy'
+		}else if(category.includes('Adventure')){
+			category = 'Adventure'
+		}else if(category.includes('Role Playing')){
+			category = 'Role Playing'
+		}else if(category.includes('Visual Novel')){
+			category = 'Visual Novel'
+		}else if(category.includes('Action')){
+			category = 'Action'
+		}else if(category.includes('Interactive Fiction')){
+			category = 'Interactive'
+		}else if(category.includes('Shooter')){
+			category = 'Shooter'
+		}else if(category.includes('Survival')){
+			category = 'Survival'
+		}else if(category.includes('Platformer')){
+			category = 'Platformer'
+		}else if(category.includes('Puzzle')){
+			category = 'Puzzle'
+		}else if(category.includes('Card Game')){
+			category = 'Card Game'
+		}else if(category.includes('Educational')){
+			category = 'Educational'
+		}else if(category.includes('Racing')){
+			category = 'Racing'
+		}else if(category.includes('Rhythm')){
+			category = 'Rhythm'
+		}else if(category.includes('Sports')){
+			category = 'Sports'
+		}else {
+			category = 'Other'
+		}
+		return {title: title, category: category, free: free}
+	},
 	
 	broadcastDisplayedGameInfo: function(){
-		var currentGame = this.games[this.currentGame];
-				var title = currentGame.getElementsByTagName("plainTitle")[0].innerHTML
-				var free = currentGame.getElementsByTagName("title")[0].innerHTML.includes('Free')
-				var category = currentGame.getElementsByTagName("title")[0].innerHTML
-				if(category.includes('Simulation')){
-					category = 'Simulation'
-				} else if(category.includes('Strategy')){
-					category = 'Strategy'
-				}else if(category.includes('Adventure')){
-					category = 'Adventure'
-				}else if(category.includes('Role Playing')){
-					category = 'Role Playing'
-				}else if(category.includes('Visual Novel')){
-					category = 'Visual Novel'
-				}else if(category.includes('Action')){
-					category = 'Action'
-				}else if(category.includes('Interactive Fiction')){
-					category = 'Interactive'
-				}else if(category.includes('Shooter')){
-					category = 'Shooter'
-				}else if(category.includes('Survival')){
-					category = 'Survival'
-				}else if(category.includes('Platformer')){
-					category = 'Platformer'
-				}else if(category.includes('Puzzle')){
-					category = 'Puzzle'
-				}else if(category.includes('Card Game')){
-					category = 'Card Game'
-				}else if(category.includes('Educational')){
-					category = 'Educational'
-				}else if(category.includes('Racing')){
-					category = 'Racing'
-				}else if(category.includes('Rhythm')){
-					category = 'Rhythm'
-				}else if(category.includes('Sports')){
-					category = 'Sports'
-				}else {
-					category = 'Other'
-				}
-				this.sendNotification("GAME_UPDATED", {title: title, category: category, free: free})
-				Log.log("GAME_UPDATED", {title: title, category: category, free: free})
+		var gameInfo = this.getCategory()
+		this.sendNotification("GAME_UPDATED", gameInfo)
+		Log.log("GAME_UPDATED", gameInfo)
 	},
 
 	socketNotificationReceived: function(notification, payload) {
